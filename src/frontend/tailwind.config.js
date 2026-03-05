@@ -16,9 +16,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ["DM Serif Display", "Georgia", "serif"],
-        mono: ["Space Mono", "Courier New", "monospace"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ["Fraunces", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "Courier New", "monospace"],
+        sans: ["Crimson Pro", "Georgia", "serif"],
       },
       colors: {
         border: "oklch(var(--border))",

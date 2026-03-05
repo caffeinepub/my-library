@@ -1,19 +1,18 @@
-import { useState, useMemo } from "react";
-import { Book, BookId, ReadingStatus } from "../backend.d";
-import { BookEntry } from "../App";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  BookOpen,
-  Search,
-  Plus,
-  BookMarked,
   BookCheck,
+  BookMarked,
+  BookOpen,
   Bookmark,
-  Star,
   LibraryBig,
+  Plus,
+  Search,
+  Star,
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import type { BookEntry } from "../App";
+import { type Book, type BookId, ReadingStatus } from "../backend.d";
 
 interface LibraryViewProps {
   books: BookEntry[];
@@ -48,7 +47,9 @@ function StatusBadge({ status }: { status: ReadingStatus }) {
   };
   const { label, className } = config[status];
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full ${className}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-full ${className}`}
+    >
       {label}
     </span>
   );
@@ -61,9 +62,7 @@ function StarRating({ rating }: { rating: number }) {
         <Star
           key={i}
           className={`w-3 h-3 ${
-            i <= rating
-              ? "fill-accent text-accent"
-              : "text-muted-foreground/30"
+            i <= rating ? "fill-accent text-accent" : "text-muted-foreground/30"
           }`}
         />
       ))}
@@ -74,9 +73,11 @@ function StarRating({ rating }: { rating: number }) {
 function BookCard({
   book,
   onClick,
+  index,
 }: {
   book: Book;
   onClick: () => void;
+  index: number;
 }) {
   const spineClass = {
     [ReadingStatus.wantToRead]: "spine-want",
@@ -88,12 +89,15 @@ function BookCard({
     <button
       type="button"
       onClick={onClick}
+      data-ocid={`book.item.${index}`}
       className="book-card animate-fade-slide w-full text-left rounded-xl overflow-hidden shadow-card hover:shadow-card-hover bg-card border border-border/60 flex flex-col group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {/* Cover image area */}
       <div className="relative w-full aspect-[2/3] overflow-hidden bg-muted">
         {/* Spine accent */}
-        <div className={`absolute left-0 top-0 bottom-0 w-1 ${spineClass} z-10`} />
+        <div
+          className={`absolute left-0 top-0 bottom-0 w-1 ${spineClass} z-10`}
+        />
 
         {book.coverUrl ? (
           <img
@@ -138,26 +142,50 @@ function StatsBar({ books }: { books: BookEntry[] }) {
   const stats = useMemo(() => {
     return {
       total: books.length,
-      reading: books.filter(([, b]) => b.status === ReadingStatus.reading).length,
+      reading: books.filter(([, b]) => b.status === ReadingStatus.reading)
+        .length,
       read: books.filter(([, b]) => b.status === ReadingStatus.read).length,
-      want: books.filter(([, b]) => b.status === ReadingStatus.wantToRead).length,
+      want: books.filter(([, b]) => b.status === ReadingStatus.wantToRead)
+        .length,
     };
   }, [books]);
 
   return (
     <div className="grid grid-cols-4 gap-2 px-4 py-3">
       {[
-        { label: "Total", value: stats.total, icon: LibraryBig, color: "text-foreground" },
-        { label: "Reading", value: stats.reading, icon: BookOpen, color: "status-reading" },
-        { label: "Read", value: stats.read, icon: BookCheck, color: "status-read" },
-        { label: "Want", value: stats.want, icon: Bookmark, color: "status-want" },
+        {
+          label: "Total",
+          value: stats.total,
+          icon: LibraryBig,
+          color: "text-foreground",
+        },
+        {
+          label: "Reading",
+          value: stats.reading,
+          icon: BookOpen,
+          color: "status-reading",
+        },
+        {
+          label: "Read",
+          value: stats.read,
+          icon: BookCheck,
+          color: "status-read",
+        },
+        {
+          label: "Want",
+          value: stats.want,
+          icon: Bookmark,
+          color: "status-want",
+        },
       ].map(({ label, value, icon: Icon, color }) => (
         <div
           key={label}
           className="flex flex-col items-center gap-0.5 bg-card rounded-lg p-2 border border-border/40"
         >
           <Icon className={`w-4 h-4 ${color}`} />
-          <span className={`font-mono text-base font-bold ${color}`}>{value}</span>
+          <span className={`font-mono text-base font-bold ${color}`}>
+            {value}
+          </span>
           <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
             {label}
           </span>
@@ -169,7 +197,10 @@ function StatsBar({ books }: { books: BookEntry[] }) {
 
 function EmptyState({ filtered }: { filtered: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-8 animate-fade-slide">
+    <div
+      className="flex flex-col items-center justify-center py-20 px-8 animate-fade-slide"
+      data-ocid="book.empty_state"
+    >
       <div className="relative mb-6">
         <div className="w-24 h-24 rounded-2xl bg-card border border-border/40 flex items-center justify-center">
           <BookMarked className="w-12 h-12 text-primary/70" />
@@ -194,9 +225,12 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 
 function SkeletonGrid() {
   return (
-    <div className="grid grid-cols-2 gap-3 px-4">
+    <div className="grid grid-cols-2 gap-3 px-4" data-ocid="book.loading_state">
       {Array.from({ length: 6 }, (_, i) => i).map((i) => (
-        <div key={`skel-${i}`} className="rounded-xl overflow-hidden bg-card border border-border/40">
+        <div
+          key={`skel-${i}`}
+          className="rounded-xl overflow-hidden bg-card border border-border/40"
+        >
           <Skeleton className="w-full aspect-[2/3]" />
           <div className="p-3 space-y-2">
             <Skeleton className="h-4 w-3/4" />
@@ -228,7 +262,7 @@ export default function LibraryView({
       result = result.filter(
         ([, b]) =>
           b.title.toLowerCase().includes(q) ||
-          b.author.toLowerCase().includes(q)
+          b.author.toLowerCase().includes(q),
       );
     }
     return result;
@@ -260,18 +294,26 @@ export default function LibraryView({
               placeholder="Search by title or author..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              data-ocid="book.search_input"
               className="pl-9 font-mono text-sm bg-card border-border/60 placeholder:text-muted-foreground/50 h-10"
             />
           </div>
         </div>
 
         {/* Status filter tabs */}
-        <div className="flex gap-1 px-4 pb-3 overflow-x-auto scrollbar-hide">
+        <div
+          className="flex gap-1 px-4 pb-3 overflow-x-auto scrollbar-hide"
+          role="tablist"
+          aria-label="Filter books by status"
+        >
           {STATUS_TABS.map((tab) => (
             <button
               type="button"
+              role="tab"
               key={tab.value}
               onClick={() => setStatusFilter(tab.value)}
+              data-ocid="book.filter.tab"
+              aria-selected={statusFilter === tab.value}
               className={`shrink-0 font-mono text-xs px-3 py-1.5 rounded-full border transition-all duration-150 ${
                 statusFilter === tab.value
                   ? "bg-primary text-primary-foreground border-primary"
@@ -296,11 +338,15 @@ export default function LibraryView({
         ) : filtered.length === 0 ? (
           <EmptyState filtered={search.length > 0 || statusFilter !== "all"} />
         ) : (
-          <div className="grid grid-cols-2 gap-3 px-4 pt-3 stagger">
-            {filtered.map(([id, book]) => (
+          <div
+            className="grid grid-cols-2 gap-3 px-4 pt-3 stagger"
+            data-ocid="book.list"
+          >
+            {filtered.map(([id, book], idx) => (
               <BookCard
                 key={String(id)}
                 book={book}
+                index={idx + 1}
                 onClick={() => onViewDetail(id, book)}
               />
             ))}
@@ -313,6 +359,7 @@ export default function LibraryView({
         type="button"
         onClick={onAddBook}
         aria-label="Add new book"
+        data-ocid="book.primary_button"
         className="fab-pulse fixed bottom-8 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-fab flex items-center justify-center transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <Plus className="w-6 h-6" />
@@ -321,11 +368,10 @@ export default function LibraryView({
       {/* Footer */}
       <footer className="fixed bottom-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-sm border-t border-border/40 flex items-center justify-center safe-bottom pointer-events-none">
         <p className="font-mono text-[10px] text-muted-foreground/50">
-          © 2026 · Built with{" "}
-          <span className="text-primary">♥</span>{" "}
-          using{" "}
+          © {new Date().getFullYear()} · Built with{" "}
+          <span className="text-primary">♥</span> using{" "}
           <a
-            href="https://caffeine.ai"
+            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2 pointer-events-auto"

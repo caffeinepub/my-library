@@ -1,38 +1,31 @@
 # My Library
 
 ## Current State
-New project. No existing code.
+The project previously had a personal library book cataloging PWA with barcode scanning via camera. The draft has expired and needs to be rebuilt.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Personal book cataloging app installable as a PWA on Android devices
-- Book entries with: title, author, genre, reading status (Want to Read / Reading / Read), rating (1-5 stars), notes, cover image URL
-- Add, edit, and delete books
-- Filter/search books by title, author, genre, or reading status
-- Book collection overview with stats (total books, read count, currently reading)
-- PWA manifest and service worker for Android home screen installation
+- Full book catalog app with add/edit/delete books
+- Book fields: title, author, genre, reading status, notes, ISBN, cover image URL
+- Barcode/ISBN scanner using device camera (QR-code component)
+- Auto-fill book details from Open Library API by ISBN
+- Mobile-friendly PWA layout
+- Book list view with search and filter by status/genre
+- Book detail/edit modal
 
 ### Modify
-N/A
+- N/A (fresh rebuild)
 
 ### Remove
-N/A
+- N/A (fresh rebuild)
 
 ## Implementation Plan
-1. Backend: store book entries per user (title, author, genre, status, rating, notes, coverUrl, dateAdded)
-2. Backend: CRUD operations -- addBook, updateBook, deleteBook, getBooks, getBook
-3. Frontend: PWA setup (manifest.json, service worker registration)
-4. Frontend: Home/dashboard view with stats and book grid
-5. Frontend: Add/Edit book form (modal or page)
-6. Frontend: Book detail view
-7. Frontend: Filter/search bar by status, genre, and text search
-
-## UX Notes
-- Mobile-first design optimized for Android screens
-- Bottom navigation bar for easy thumb access
-- Card-based book grid with cover thumbnails
-- Status pills (Want to Read / Reading / Read) with distinct colors
-- Star rating component
-- Smooth transitions between views
-- Install prompt banner for Android PWA installation
+1. Select `qr-code` and `http-outcalls` components for barcode scanning and Open Library API lookups
+2. Generate Motoko backend with book CRUD operations
+3. Build React frontend with:
+   - Book list page with search/filter
+   - Add/Edit book modal with barcode scan button
+   - Camera-based ISBN scanner using qr-code component
+   - HTTP outcall to Open Library API to auto-fill book metadata
+   - PWA manifest for Android home screen installation

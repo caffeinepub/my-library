@@ -2,11 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted fonts — required for deployed apps (no external CDN) */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/assets/fonts/Fraunces.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Crimson Pro';
+  src: url('/assets/fonts/CrimsonPro.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/assets/fonts/JetBrainsMono.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   /* 
-   * My Library — Dark editorial theme
-   * Palette: Midnight indigo + coral red + amber gold
-   * Fonts: DM Serif Display (titles) + Space Mono (meta) + Inter (body)
+   * My Library — Warm editorial theme
+   * Palette: Deep amber + terracotta + dark parchment
+   * Fonts: Fraunces (display) + Crimson Pro (body) + JetBrains Mono (meta)
    */
   :root {
     --radius: 0.75rem;
@@ -96,17 +121,21 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Crimson Pro', Georgia, serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   .font-serif {
-    font-family: 'DM Serif Display', Georgia, serif;
+    font-family: 'Fraunces', Georgia, serif;
   }
 
   .font-mono {
-    font-family: 'Space Mono', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  .font-sans {
+    font-family: 'Crimson Pro', Georgia, serif;
   }
 }
 

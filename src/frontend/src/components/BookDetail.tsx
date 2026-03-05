@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { Book, BookId, ReadingStatus } from "../backend.d";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,17 +9,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
-  Edit3,
-  Trash2,
   BookOpen,
-  Star,
   Calendar,
-  Tag,
+  Edit3,
   FileText,
   Loader2,
+  Star,
+  Tag,
+  Trash2,
 } from "lucide-react";
+import { useState } from "react";
+import { type Book, type BookId, ReadingStatus } from "../backend.d";
 
 interface BookDetailProps {
   id: BookId;
@@ -49,14 +49,19 @@ function StatusBadge({ status }: { status: ReadingStatus }) {
   };
   const { label, className } = config[status];
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full font-mono text-sm ${className}`}>
+    <span
+      className={`inline-flex items-center px-3 py-1 rounded-full font-mono text-sm ${className}`}
+    >
       {label}
     </span>
   );
 }
 
 function StarRating({ rating }: { rating: number }) {
-  if (rating === 0) return <span className="font-mono text-sm text-muted-foreground">Not rated</span>;
+  if (rating === 0)
+    return (
+      <span className="font-mono text-sm text-muted-foreground">Not rated</span>
+    );
   return (
     <div className="flex items-center gap-2">
       <div className="flex gap-1">
@@ -64,12 +69,16 @@ function StarRating({ rating }: { rating: number }) {
           <Star
             key={i}
             className={`w-5 h-5 ${
-              i <= rating ? "fill-accent text-accent" : "text-muted-foreground/30"
+              i <= rating
+                ? "fill-accent text-accent"
+                : "text-muted-foreground/30"
             }`}
           />
         ))}
       </div>
-      <span className="font-mono text-sm text-muted-foreground">{rating}/5</span>
+      <span className="font-mono text-sm text-muted-foreground">
+        {rating}/5
+      </span>
     </div>
   );
 }
@@ -115,7 +124,7 @@ export default function BookDetail({
     }
   };
 
-  const dateAdded = new Date(Number(book.dateAdded));
+  const dateAdded = new Date(Number(book.dateAdded) / 1_000_000);
   const formattedDate = dateAdded.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -136,6 +145,7 @@ export default function BookDetail({
           <button
             type="button"
             onClick={onBack}
+            data-ocid="book.cancel_button"
             className="w-9 h-9 rounded-xl bg-card border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Go back"
           >
@@ -147,6 +157,7 @@ export default function BookDetail({
               variant="outline"
               size="sm"
               onClick={onEdit}
+              data-ocid="book.edit_button"
               className="font-mono h-9 border-border/60 bg-card gap-1.5"
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -159,6 +170,7 @@ export default function BookDetail({
                   variant="outline"
                   size="sm"
                   disabled={isDeleting}
+                  data-ocid="book.open_modal_button"
                   className="font-mono h-9 border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 gap-1.5"
                 >
                   {isDeleting ? (
@@ -169,21 +181,29 @@ export default function BookDetail({
                   Delete
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-card border-border max-w-xs mx-auto">
+              <AlertDialogContent
+                data-ocid="book.dialog"
+                className="bg-card border-border max-w-xs mx-auto"
+              >
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-serif text-foreground">
                     Remove this book?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="font-mono text-sm text-muted-foreground">
-                    "{book.title}" will be permanently removed from your library.
+                    "{book.title}" will be permanently removed from your
+                    library.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-2">
-                  <AlertDialogCancel className="font-mono bg-card border-border/60">
+                  <AlertDialogCancel
+                    data-ocid="book.cancel_button"
+                    className="font-mono bg-card border-border/60"
+                  >
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
+                    data-ocid="book.confirm_button"
                     className="font-mono bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
                     Remove
@@ -213,14 +233,17 @@ export default function BookDetail({
           <div className="relative px-4 py-8 flex gap-5">
             {/* Cover */}
             <div className="relative w-28 shrink-0 rounded-xl overflow-hidden shadow-card border border-border/40">
-              <div className={`absolute left-0 top-0 bottom-0 w-1 ${spineClass} z-10`} />
+              <div
+                className={`absolute left-0 top-0 bottom-0 w-1 ${spineClass} z-10`}
+              />
               {book.coverUrl ? (
                 <img
                   src={book.coverUrl}
                   alt={`Cover of ${book.title}`}
                   className="w-full aspect-[2/3] object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).parentElement!.style.display = "none";
+                    (e.target as HTMLImageElement)
+                      .parentElement!.style.display = "none";
                   }}
                 />
               ) : (
